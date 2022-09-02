@@ -1,6 +1,9 @@
 import { useParams } from "react-router-dom"
 import { Component } from "react"
 import Carousel from "./Carousel"
+import ErrorBoundary from "./ErrorBoundary"
+import ThemeContext from "./ThemeContext"
+
 
 class Details extends Component {
     // constructor(props){
@@ -30,15 +33,21 @@ class Details extends Component {
         if(this.state.loading){
             return<h2>loading ...</h2>
         }
-
+        
         const {animal, breed, city, state, description, name, images} = this.state;
-
+        
         return (
             <div className="details">
                 <Carousel images = {images}/>
                 <h1>{name}</h1>
                 <h2>{animal} - {breed} - {city}, {state}</h2>
-                <button>Adopt {name}</button>
+                <ThemeContext.Consumer>
+                    {
+                        ([theme]) => (
+                            <button style = {{ backgroundColor: theme}}> Adopt {name}</button>
+                        )
+                    }
+                </ThemeContext.Consumer>
                 <p>{description}</p>
             </div>
         )
@@ -52,7 +61,13 @@ class Details extends Component {
 
 const WrappedDetails = () => {
     const params = useParams();
-    return <Details params={params}/>
+    return (
+        <ErrorBoundary>
+            <Details params={params}/>
+        </ErrorBoundary>
+    )
+    
+    
 }
 
 export default WrappedDetails;
